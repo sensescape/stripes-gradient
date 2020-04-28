@@ -223,7 +223,7 @@ fonts:
 
 scene:
     background:
-        color: [1.000,1.000,1.000]
+        color: [0.000,0.000,0.000]
 
 sources:
     mapzen:
@@ -442,7 +442,7 @@ layers:
                     buffer: 42px
                     font:
                         size: [[5,9px],[8,10px],[12,13px]]
-                        stroke: { color: [1.000,1.000,1.000], width: 3px }
+                        stroke: { color: [0.400,0.400,0.400], width: 3px }
                         transform: uppercase
 
             # _text_early:
@@ -593,12 +593,12 @@ styles:
         shaders:
             defines:
                 STRIPES_SCALE: 20
-                STRIPES_WIDTH: 0.6
+                STRIPES_WIDTH: 0.35
                 STRIPES_ALPHA: 1.0
                 STRIPES_ANGLE: 3.14159265
             blocks:
                 filter: |
-                    color.rgb = mix(vec3(1.000,1.000,1.000), vec3(0.700,0.700,0.700), gl_FragCoord.x / u_resolution.x);
+                    color.rgb = mix(vec3(0.000,0.000,0.000), vec3(0.300,0.300,0.300), gl_FragCoord.x / u_resolution.x);
 
     water-stripes-gradient:
         base: polygons
@@ -619,10 +619,10 @@ styles:
         shaders:
             uniforms:
                 u_colors:
-                    - [0.000,0.000,0.000] # lower-left
-                    - [0.500,0.500,0.500] # lower-right
-                    - [1.000,1.000,1.000] # upper-left
-                    - [0.300,0.300,0.300] # upper-right
+                    - [0.600,0.600,0.600] # lower-left
+                    - [0.100,0.100,0.100] # lower-right
+                    - [0.050,0.050,0.050] # upper-left
+                    - [0.650,0.650,0.650] # upper-right
             defines:
                 STRIPES_WIDTH: .75
                 STRIPES_ALPHA: 1.0
