@@ -1,4 +1,4 @@
-### Stripes Frequency
+### Stripes Gradient
 
 A visual study of stripes. 
 
