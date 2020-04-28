@@ -243,14 +243,12 @@ layers:
             polygons:
                 style: earth-stripes-gradient
                 order: global.feature_order
-                color: [1.000,0.000,0.000]
 
     water:
         data: { source: mapzen, layer: water }
         draw:
             polygons:
-                style: stripes-water
-                color: [0.080,0.080,0.080]
+                style: water-stripes-2-gradients
                 order: global.feature_order
 
         lakes:
@@ -595,13 +593,59 @@ styles:
         shaders:
             defines:
                 STRIPES_SCALE: 20
-                STRIPES_WIDTH: 0.25
+                STRIPES_WIDTH: 0.6
                 STRIPES_ALPHA: 1.0
                 STRIPES_ANGLE: 3.14159265
             blocks:
                 filter: |
-                    color.rgb = mix(vec3(1.000,1.000,1.000), vec3(0.750,0.750,0.750), gl_FragCoord.x / u_resolution.x);
+                    color.rgb = mix(vec3(1.000,1.000,1.000), vec3(0.700,0.700,0.700), gl_FragCoord.x / u_resolution.x);
 
+    water-stripes-gradient:
+        base: polygons
+        mix: [polygons-stripes]
+        shaders:
+            defines:
+                STRIPES_SCALE: 1
+                STRIPES_WIDTH: 0.6
+                STRIPES_ALPHA: 1.0
+                STRIPES_ANGLE: 3.14159265
+            blocks:
+                filter: |
+                    color.rgb = mix(vec3(0.000,0.000,0.000), vec3(0.500,0.500,0.500), gl_FragCoord.x / u_resolution.x);
+
+    water-stripes-2-gradients:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen, space-tile]
+        shaders:
+            uniforms:
+                u_colors:
+                    - [0.000,0.000,0.000] # lower-left
+                    - [0.500,0.500,0.500] # lower-right
+                    - [1.000,1.000,1.000] # upper-left
+                    - [0.300,0.300,0.300] # upper-right
+            defines:
+                STRIPES_WIDTH: .75
+                STRIPES_ALPHA: 1.0
+                STRIPES_SCALE: 1.
+                STRIPES_ANGLE: 3.14159265
+            blocks:
+                color: |
+                    //vec2 st = getScreenNonStretchCoords();
+                    vec2 st = getTileCoords();
+
+                    color.rgb = mix(mix(u_colors[0], u_colors[1], gl_FragCoord.x/u_resolution.x),
+                                mix(u_colors[2], u_colors[3], gl_FragCoord.x/u_resolution.x),
+                                stripes(st*1.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+
+    ## notes for parks-stripes-2-gradients
+    ## gradient across screen space
+    ## color.rgb = mix(mix(u_colors[0], u_colors[1], gl_FragCoord.x),
+    ##             mix(u_colors[2], u_colors[3], gl_FragCoord.x),
+    ##             stripes(st*50.,
+    ##             STRIPES_WIDTH,
+    ##             STRIPES_ANGLE));
     text-blend-order:
         base: text
         blend_order: 10
