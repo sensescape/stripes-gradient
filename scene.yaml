@@ -281,7 +281,7 @@ layers:
 
     landuse:
         data: { source: mapzen }
-        enabled: true
+        enabled: false
         draw:
             polygons:
                 order: global.feature_order
@@ -375,7 +375,7 @@ layers:
 
     buildings:
         data: { source: mapzen, layer: buildings }
-        enabled: true
+        enabled: false
         filter:
             not: { location: underground }
         draw:
