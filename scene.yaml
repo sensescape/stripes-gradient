@@ -223,7 +223,7 @@ fonts:
 
 scene:
     background:
-        color: [1.000,1.000,1.000]
+        color: [0.073,0.190,0.610]
 
 sources:
     mapzen:
@@ -281,7 +281,7 @@ layers:
 
     landuse:
         data: { source: mapzen }
-        enabled: false
+        enabled: true
         draw:
             polygons:
                 order: global.feature_order
@@ -296,7 +296,7 @@ layers:
                     - kind: [national_park, battlefield, protected_area, park, protected_area, nature_reserve, forest, natural_forest, wood, natural_wood, natural_park]
             draw:
                 polygons:
-                    style: stripes-green
+                    style: green-stripes-2-gradients
                     color: [1.000,1.000,1.000]
                     visible: true
 
@@ -345,14 +345,14 @@ layers:
         #             color: [0.000,0.000,0.000]
         #             visible: true
 
-        beach:
-            filter:
-                kind: beach
-            draw:
-                polygons:
-                    style: stripes-beach
-                    color: [0.980,0.980,0.980]
-                    visible: true
+        # beach:
+        #     filter:
+        #         kind: beach
+        #     draw:
+        #         polygons:
+        #             style: stripes-beach
+        #             color: [0.980,0.980,0.980]
+        #             visible: true
 
         # cemetery:
         #     filter:
@@ -363,14 +363,14 @@ layers:
         #             color: [0.000,0.000,0.000]
         #             visible: true
 
-        hospital:
-            filter:
-                kind: hospital
-            draw:
-                polygons:
-                    style: stripes-hospital
-                    color: [0.880,0.880,0.880]
-                    visible: true
+        # hospital:
+        #     filter:
+        #         kind: hospital
+        #     draw:
+        #         polygons:
+        #             style: stripes-hospital
+        #             color: [0.880,0.880,0.880]
+        #             visible: true
 
 
     buildings:
@@ -735,7 +735,7 @@ styles:
             uniforms:
                 u_colors:
                     - [0.380,0.173,0.091] # lower-left
-                    - [0.116,0.223,0.610] # lower-right
+                    - [0.073,0.190,0.610] # lower-right
                     - [1.000,0.683,0.320] # upper-left
                     - [1.000,0.683,0.320] # upper-right
             defines:
@@ -799,6 +799,32 @@ styles:
                 color: |
                     vec2 st = getScreenNonStretchCoords();
                     color.rgb = mix(color.rgb,vec3(0.915),stripes(st*25.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+
+    green-stripes-2-gradients:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen, space-tile]
+        shaders:
+            uniforms:
+                u_colors:
+                    - [0.073,0.190,0.610] # lower-left
+                    - [0.073,0.190,0.610] # lower-right
+                    - [0.080,0.530,0.342] # upper-left
+                    - [0.557,0.854,0.319] # upper-right
+            defines:
+                STRIPES_WIDTH: .25
+                STRIPES_ALPHA: 1.0
+                STRIPES_SCALE: 0.7
+                STRIPES_ANGLE: 3.14159265
+            blocks:
+                color: |
+                    //vec2 st = getScreenNonStretchCoords();
+                    vec2 st = getTileCoords();
+
+                    color.rgb = mix(mix(u_colors[0], u_colors[1], gl_FragCoord.x/u_resolution.x),
+                                mix(u_colors[2], u_colors[3], gl_FragCoord.x/u_resolution.x),
+                                stripes(st*20.,
                                         STRIPES_WIDTH,
                                         STRIPES_ANGLE));
 
