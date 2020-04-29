@@ -813,7 +813,7 @@ styles:
                     - [0.080,0.530,0.342] # upper-left
                     - [0.557,0.854,0.319] # upper-right
             defines:
-                STRIPES_WIDTH: .25
+                STRIPES_WIDTH: .15
                 STRIPES_ALPHA: 1.0
                 STRIPES_SCALE: 0.7
                 STRIPES_ANGLE: 3.14159265
@@ -824,7 +824,7 @@ styles:
 
                     color.rgb = mix(mix(u_colors[0], u_colors[1], gl_FragCoord.x/u_resolution.x),
                                 mix(u_colors[2], u_colors[3], gl_FragCoord.x/u_resolution.x),
-                                stripes(st*20.,
+                                stripes(st*13.,
                                         STRIPES_WIDTH,
                                         STRIPES_ANGLE));
 
