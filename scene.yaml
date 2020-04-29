@@ -223,7 +223,7 @@ fonts:
 
 scene:
     background:
-        color: [0.000,0.000,0.000]
+        color: [1.000,1.000,1.000]
 
 sources:
     mapzen:
@@ -241,7 +241,9 @@ layers:
         data: { source: mapzen, layer: earth }
         draw:
             polygons:
-                style: earth-stripes-gradient
+                # style: earth-stripes-gradient
+                style: earth-stripes-2-gradients
+                color: yellow
                 order: global.feature_order
 
     water:
@@ -373,7 +375,7 @@ layers:
 
     buildings:
         data: { source: mapzen, layer: buildings }
-        enabled: false
+        enabled: true
         filter:
             not: { location: underground }
         draw:
@@ -388,7 +390,7 @@ layers:
         footprints:
             draw:
                 polygons:
-                    style: stripes-buildings
+                    style: buildings-stripes-2-gradients
                     visible: true
 
             # extrude:
@@ -405,12 +407,12 @@ layers:
             #             color: [0.500,0.500,0.500]
             #             extrude: global.building_extrude_height
 
-        in_hospital:
-            filter: { landuse_kind: hospital }
-            draw:
-                polygons:
-                    style: stripes-hospital-bldgs
-                    color: [0.450,0.450,0.450]
+        # in_hospital:
+        #     filter: { landuse_kind: hospital }
+        #     draw:
+        #         polygons:
+        #             style: stripes-hospital-bldgs
+        #             color: [0.450,0.450,0.450]
 
         # in_university:
         #     filter: { landuse_kind: [university,school] }
@@ -442,7 +444,7 @@ layers:
                     buffer: 42px
                     font:
                         size: [[5,9px],[8,10px],[12,13px]]
-                        stroke: { color: [0.400,0.400,0.400], width: 3px }
+                        stroke: { color: [1.000,0.850,0.470], width: 3px }
                         transform: uppercase
 
             # _text_early:
@@ -592,13 +594,13 @@ styles:
         mix: [polygons-stripes]
         shaders:
             defines:
-                STRIPES_SCALE: 20
-                STRIPES_WIDTH: 0.35
+                STRIPES_SCALE: 10
+                STRIPES_WIDTH: 0.75
                 STRIPES_ALPHA: 1.0
                 STRIPES_ANGLE: 3.14159265
             blocks:
                 filter: |
-                    color.rgb = mix(vec3(0.000,0.000,0.000), vec3(0.300,0.300,0.300), gl_FragCoord.x / u_resolution.x);
+                    color.rgb = mix(vec3(0.490,0.415,0.382), vec3(1.000,1.000,1.000), gl_FragCoord.x / u_resolution.x);
 
     water-stripes-gradient:
         base: polygons
@@ -613,16 +615,44 @@ styles:
                 filter: |
                     color.rgb = mix(vec3(0.000,0.000,0.000), vec3(0.500,0.500,0.500), gl_FragCoord.x / u_resolution.x);
 
+    earth-stripes-2-gradients:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen, space-tile]
+        shaders:
+            uniforms:
+                u_colors:
+                    - [1.000,0.878,0.570] # lower-left
+                    - [1.000,0.547,0.030] # lower-right
+                    - [0.116,0.223,0.610] # upper-left
+                    - [0.028,0.003,0.130] # upper-right
+            defines:
+                STRIPES_WIDTH: .95
+                STRIPES_ALPHA: 1.0
+                STRIPES_SCALE: 10.
+                STRIPES_ANGLE: 3.14159265
+            blocks:
+                color: |
+                    //vec2 st = getScreenNonStretchCoords();
+                    vec2 st = getTileCoords();
+
+                    color.rgb = mix(mix(u_colors[0], u_colors[1], gl_FragCoord.x/u_resolution.x),
+                                mix(u_colors[2], u_colors[3], gl_FragCoord.x/u_resolution.x),
+                                stripes(st*10.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+
+
     water-stripes-2-gradients:
         base: polygons
         mix: [functions-aastep, patterns-stripes, space-screen, space-tile]
         shaders:
             uniforms:
                 u_colors:
-                    - [0.600,0.600,0.600] # lower-left
-                    - [0.100,0.100,0.100] # lower-right
-                    - [0.050,0.050,0.050] # upper-left
-                    - [0.650,0.650,0.650] # upper-right
+                    - [0.116,0.223,0.610] # lower-left
+                    - [0.028,0.003,0.130] # lower-right
+                    - [0.028,0.003,0.130] # upper-left
+                    # - [0.105,0.221,0.420] # upper-right
+                    - [0.073,0.007,0.340] # upper-right
             defines:
                 STRIPES_WIDTH: .75
                 STRIPES_ALPHA: 1.0
@@ -695,6 +725,32 @@ styles:
                 color: |
                     vec2 st = getScreenNonStretchCoords();
                     color.rgb = mix(color.rgb,vec3(0.250),stripes(st*60.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+
+    buildings-stripes-2-gradients:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen, space-tile]
+        shaders:
+            uniforms:
+                u_colors:
+                    - [0.380,0.173,0.091] # lower-left
+                    - [0.116,0.223,0.610] # lower-right
+                    - [1.000,0.683,0.320] # upper-left
+                    - [1.000,0.683,0.320] # upper-right
+            defines:
+                STRIPES_WIDTH: .925
+                STRIPES_ALPHA: 1.0
+                STRIPES_SCALE: 1.
+                STRIPES_ANGLE: 3.14159265
+            blocks:
+                color: |
+                    //vec2 st = getScreenNonStretchCoords();
+                    vec2 st = getTileCoords();
+
+                    color.rgb = mix(mix(u_colors[0], u_colors[1], gl_FragCoord.x/u_resolution.x),
+                                mix(u_colors[2], u_colors[3], gl_FragCoord.x/u_resolution.x),
+                                stripes(st*30.,
                                         STRIPES_WIDTH,
                                         STRIPES_ANGLE));
 
