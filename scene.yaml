@@ -381,14 +381,13 @@ layers:
                     style: pedestrian-stripes-2-gradients
                     visible: true
 
-        # beach:
-        #     filter:
-        #         kind: beach
-        #     draw:
-        #         polygons:
-        #             style: stripes-beach
-        #             color: [0.980,0.980,0.980]
-        #             visible: true
+        beach:
+            filter:
+                kind: beach
+            draw:
+                polygons:
+                    style: beach-stripes-2-gradients
+                    visible: true
 
         # cemetery:
         #     filter:
@@ -983,6 +982,32 @@ styles:
                                         STRIPES_WIDTH,
                                         STRIPES_ANGLE));
 
+    beach-stripes-2-gradients:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen, space-tile]
+        shaders:
+            uniforms:
+                u_colors:
+                    - [0.073,0.190,0.610] # lower-left
+                    - [0.073,0.190,0.610] # lower-right
+                    - [1.000,0.783,0.000] # upper-left
+                    - [1.000,0.983,0.850] # upper-right
+            defines:
+                STRIPES_WIDTH: .15
+                STRIPES_ALPHA: 1.0
+                STRIPES_SCALE: 0.7
+                STRIPES_ANGLE: 3.14159265
+            blocks:
+                color: |
+                    //vec2 st = getScreenNonStretchCoords();
+                    vec2 st = getTileCoords();
+
+                    color.rgb = mix(mix(u_colors[0], u_colors[1], gl_FragCoord.x/u_resolution.x),
+                                mix(u_colors[2], u_colors[3], gl_FragCoord.x/u_resolution.x),
+                                stripes(st*13.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+
     stripes-pitch:
         base: polygons
         mix: [functions-aastep, patterns-stripes, space-screen]
@@ -1012,22 +1037,6 @@ styles:
                 color: |
                     vec2 st = getScreenNonStretchCoords();
                     color.rgb = mix(color.rgb,vec3(1.000),stripes(st*15.,
-                                        STRIPES_WIDTH,
-                                        STRIPES_ANGLE));
-
-    stripes-beach:
-        base: polygons
-        mix: [functions-aastep, patterns-stripes, space-screen]
-        shaders:
-            defines:
-                STRIPES_WIDTH: .2
-                STRIPES_ALPHA: 1.0
-                STRIPES_SCALE: 1.0
-                STRIPES_ANGLE: 3.14159265
-            blocks:
-                color: |
-                    vec2 st = getScreenNonStretchCoords();
-                    color.rgb = mix(color.rgb,vec3(1.000),stripes(st*25.,
                                         STRIPES_WIDTH,
                                         STRIPES_ANGLE));
 
