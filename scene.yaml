@@ -427,12 +427,12 @@ layers:
                     style: hospital-bldgs-stripes-2-gradients
                     color: [0.850,0.170,0.487]
 
-        # in_university:
-        #     filter: { landuse_kind: [university,school] }
-        #     draw:
-        #         polygons:
-        #             style: stripes-university-bldgs
-        #             color: [0.000,0.000,0.000]
+        in_university:
+            filter: { landuse_kind: [university,school] }
+            draw:
+                polygons:
+                    style: university-bldgs-stripes-2-gradients
+                    color: [0.000,0.000,0.000]
 
     places:
         data: { source: mapzen, layer: places }
@@ -748,6 +748,32 @@ styles:
                                         STRIPES_WIDTH,
                                         STRIPES_ANGLE));
 
+    university-bldgs-stripes-2-gradients:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen, space-tile]
+        shaders:
+            uniforms:
+                u_colors:
+                    - [0.000,1.000,0.917] # lower-left
+                    - [0.000,0.175,0.750] # lower-right
+                    - [1.000,0.683,0.320] # upper-left
+                    - [1.000,0.683,0.320] # upper-right
+            defines:
+                STRIPES_WIDTH: .925
+                STRIPES_ALPHA: 1.0
+                STRIPES_SCALE: 1.
+                STRIPES_ANGLE: 3.14159265
+            blocks:
+                color: |
+                    //vec2 st = getScreenNonStretchCoords();
+                    vec2 st = getTileCoords();
+
+                    color.rgb = mix(mix(u_colors[0], u_colors[1], gl_FragCoord.x/u_resolution.x),
+                                mix(u_colors[2], u_colors[3], gl_FragCoord.x/u_resolution.x),
+                                stripes(st*30.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+
     hospitals-stripes-2-gradients:
         base: polygons
         mix: [functions-aastep, patterns-stripes, space-screen, space-tile]
@@ -893,7 +919,7 @@ styles:
             blocks:
                 color: |
                     vec2 st = getScreenNonStretchCoords();
-                    color.rgb = mix(color.rgb,vec3(1.000,0.934,0.560),stripes(st*85.,
+                    color.rgb = mix(color.rgb,vec3(1.000,0.908,0.390),stripes(st*85.,
                                         STRIPES_WIDTH,
                                         STRIPES_ANGLE));
 
@@ -958,22 +984,6 @@ styles:
                 color: |
                     vec2 st = getScreenNonStretchCoords();
                     color.rgb = mix(color.rgb,vec3(1.000),stripes(st*65.,
-                                        STRIPES_WIDTH,
-                                        STRIPES_ANGLE));
-
-    stripes-university-bldgs:
-        base: polygons
-        mix: [functions-aastep, patterns-stripes, space-screen]
-        shaders:
-            defines:
-                STRIPES_WIDTH: .99
-                STRIPES_ALPHA: 1.0
-                STRIPES_SCALE: 0.7
-                STRIPES_ANGLE: 3.14159265
-            blocks:
-                color: |
-                    vec2 st = getScreenNonStretchCoords();
-                    color.rgb = mix(color.rgb,vec3(1.000),stripes(st*75.,
                                         STRIPES_WIDTH,
                                         STRIPES_ANGLE));
 
