@@ -323,23 +323,23 @@ layers:
                     color: [1.000,1.000,1.000]
                     visible: true
 
-        # gardens-playgrounds:
-        #     filter:
-        #         kind: [garden, playground]
-        #     draw:
-        #         polygons:
-        #             style: stripes-garden
-        #             color: [1.000,1.000,1.000]
-        #             visible: true
+        gardens-playgrounds:
+            filter:
+                kind: [garden, playground]
+            draw:
+                polygons:
+                    style: garden-stripes-2-gradients
+                    color: [1.000,1.000,1.000]
+                    visible: true
 
-        # pitch:
-        #     filter:
-        #         kind: pitch
-        #     draw:
-        #         polygons:
-        #             style: stripes-pitch
-        #             color: [0.000,0.000,0.000]
-        #             visible: true
+        pitch:
+            filter:
+                kind: pitch
+            draw:
+                polygons:
+                    style: stripes-pitch
+                    color: [0.073,0.190,0.610]
+                    visible: true
 
         # golf_course:
         #     filter:
@@ -902,6 +902,33 @@ styles:
                                         STRIPES_WIDTH,
                                         STRIPES_ANGLE));
 
+    garden-stripes-2-gradients:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen, space-tile]
+        shaders:
+            uniforms:
+                u_colors:
+                    - [0.073,0.190,0.610] # lower-left
+                    - [0.073,0.190,0.610] # lower-right
+                    - [0.000,0.730,0.280] # upper-left
+                    - [0.000,0.667,0.890]
+                    # - [0.557,0.854,0.319] # upper-right
+            defines:
+                STRIPES_WIDTH: .15
+                STRIPES_ALPHA: 1.0
+                STRIPES_SCALE: 0.7
+                STRIPES_ANGLE: 3.14159265
+            blocks:
+                color: |
+                    //vec2 st = getScreenNonStretchCoords();
+                    vec2 st = getTileCoords();
+
+                    color.rgb = mix(mix(u_colors[0], u_colors[1], gl_FragCoord.x/u_resolution.x),
+                                mix(u_colors[2], u_colors[3], gl_FragCoord.x/u_resolution.x),
+                                stripes(st*13.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+
     stripes-garden:
         base: polygons
         mix: [functions-aastep, patterns-stripes, space-screen]
@@ -930,7 +957,7 @@ styles:
             blocks:
                 color: |
                     vec2 st = getScreenNonStretchCoords();
-                    color.rgb = mix(color.rgb,vec3(1.000),stripes(st*85.,
+                    color.rgb = mix(color.rgb,vec3(1.000,0.934,0.560),stripes(st*85.,
                                         STRIPES_WIDTH,
                                         STRIPES_ANGLE));
 
