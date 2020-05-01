@@ -304,10 +304,33 @@ layers:
                     order: 18
                     visible: true
 
+        parks-and-national-forests-not-national-park:
+            filter:
+                all:
+                    - $zoom: { min: 4 }
+                    - kind: [park, national_park]
+                any:
+                    - not: { operator: [ "United States National Park Service", "United States Forest Service" ] }
+                    - not: { protect_class: ['2','3','5','6'] }
+            # default for national forests and more?
+            draw:
+                polygons:
+                    style: parks-stripes-2-gradients
+                    visible: true
+            national_park:
+                #filter: function() { return feature.name && (feature.name.indexOf('National Park') > -1); }
+                filter:
+                    all:
+                        - kind: national_park
+                        - not: [ protect_class: ['2','3','5','6'], operator: [ "United States National Park Service"] ]
+                draw:
+                    polygons:
+                        visible: true
+
         green-areas:
             filter:
                 all:
-                    - kind: [park, nature_reserve, forest, natural_forest, wood, natural_wood, natural_park]
+                    - kind: [nature_reserve, forest, natural_forest, wood, natural_wood, natural_park]
             draw:
                 polygons:
                     style: green-stripes-2-gradients
@@ -350,14 +373,13 @@ layers:
         #             color: [1.000,1.000,1.000]
         #             visible: true
 
-        # pedestrian:
-        #     filter:
-        #         kind: [pedestrian,common,footway]
-        #     draw:
-        #         polygons:
-        #             style: stripes-pedestrian
-        #             color: [0.000,0.000,0.000]
-        #             visible: true
+        pedestrian:
+            filter:
+                kind: [pedestrian,common,footway]
+            draw:
+                polygons:
+                    style: pedestrian-stripes-2-gradients
+                    visible: true
 
         # beach:
         #     filter:
@@ -880,6 +902,33 @@ styles:
                                         STRIPES_WIDTH,
                                         STRIPES_ANGLE));
 
+    parks-stripes-2-gradients:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen, space-tile]
+        shaders:
+            uniforms:
+                u_colors:
+                    - [0.073,0.190,0.610] # lower-left
+                    - [0.073,0.190,0.610] # lower-right
+                    - [0.000,1.000,0.500] # upper-left
+                    - [0.000,0.458,0.500]
+                    # - [0.557,0.854,0.319] # upper-right
+            defines:
+                STRIPES_WIDTH: .15
+                STRIPES_ALPHA: 1.0
+                STRIPES_SCALE: 0.7
+                STRIPES_ANGLE: 3.14159265
+            blocks:
+                color: |
+                    //vec2 st = getScreenNonStretchCoords();
+                    vec2 st = getTileCoords();
+
+                    color.rgb = mix(mix(u_colors[0], u_colors[1], gl_FragCoord.x/u_resolution.x),
+                                mix(u_colors[2], u_colors[3], gl_FragCoord.x/u_resolution.x),
+                                stripes(st*13.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+
     garden-stripes-2-gradients:
         base: polygons
         mix: [functions-aastep, patterns-stripes, space-screen, space-tile]
@@ -890,6 +939,33 @@ styles:
                     - [0.073,0.190,0.610] # lower-right
                     - [0.000,0.730,0.280] # upper-left
                     - [0.000,0.667,0.890]
+                    # - [0.557,0.854,0.319] # upper-right
+            defines:
+                STRIPES_WIDTH: .15
+                STRIPES_ALPHA: 1.0
+                STRIPES_SCALE: 0.7
+                STRIPES_ANGLE: 3.14159265
+            blocks:
+                color: |
+                    //vec2 st = getScreenNonStretchCoords();
+                    vec2 st = getTileCoords();
+
+                    color.rgb = mix(mix(u_colors[0], u_colors[1], gl_FragCoord.x/u_resolution.x),
+                                mix(u_colors[2], u_colors[3], gl_FragCoord.x/u_resolution.x),
+                                stripes(st*13.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+
+    pedestrian-stripes-2-gradients:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen, space-tile]
+        shaders:
+            uniforms:
+                u_colors:
+                    - [0.073,0.190,0.610] # lower-left
+                    - [0.073,0.190,0.610] # lower-right
+                    - [0.500,0.500,0.500] # upper-left
+                    - [0.900,0.900,0.900]
                     # - [0.557,0.854,0.319] # upper-right
             defines:
                 STRIPES_WIDTH: .15
