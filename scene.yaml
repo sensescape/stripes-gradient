@@ -290,24 +290,38 @@ layers:
                 order: global.feature_order
                 visible: false
 
+        # tier1:
+        national_park:
+            filter:
+                all:
+                    - kind: [national_park, battlefield, protected_area]
+                any:
+                    - not: { operator: [ "United States Forest Service" ] }
+                    - protect_class: ['2','3','5']
+            draw:
+                polygons:
+                    style: natl-park-stripes-2-gradients
+                    order: 18
+                    visible: true
+
         green-areas:
             filter:
                 all:
-                    - kind: [national_park, battlefield, protected_area, park, protected_area, nature_reserve, forest, natural_forest, wood, natural_wood, natural_park]
+                    - kind: [park, nature_reserve, forest, natural_forest, wood, natural_wood, natural_park]
             draw:
                 polygons:
                     style: green-stripes-2-gradients
                     color: [1.000,1.000,1.000]
                     visible: true
 
-        # universities-schools:
-        #     filter:
-        #         kind: [university, college, school]
-        #     draw:
-        #         polygons:
-        #             style: stripes-university
-        #             color: [1.000,1.000,1.000]
-        #             visible: true
+        universities-schools:
+            filter:
+                kind: [university, college, school]
+            draw:
+                polygons:
+                    style: universities-stripes-2-gradients
+                    color: [1.000,1.000,1.000]
+                    visible: true
 
         # gardens-playgrounds:
         #     filter:
@@ -363,14 +377,13 @@ layers:
         #             color: [0.000,0.000,0.000]
         #             visible: true
 
-        # hospital:
-        #     filter:
-        #         kind: hospital
-        #     draw:
-        #         polygons:
-        #             style: stripes-hospital
-        #             color: [0.880,0.880,0.880]
-        #             visible: true
+        hospital:
+            filter:
+                kind: hospital
+            draw:
+                polygons:
+                    style: hospitals-stripes-2-gradients
+                    visible: true
 
 
     buildings:
@@ -735,6 +748,58 @@ styles:
                                         STRIPES_WIDTH,
                                         STRIPES_ANGLE));
 
+    hospitals-stripes-2-gradients:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen, space-tile]
+        shaders:
+            uniforms:
+                u_colors:
+                    - [1.000,0.530,0.992] # lower-left
+                    - [1.000,0.547,0.030] # lower-right
+                    - [0.116,0.223,0.610] # upper-left
+                    - [0.028,0.003,0.130] # upper-right
+            defines:
+                STRIPES_WIDTH: .95
+                STRIPES_ALPHA: 1.0
+                STRIPES_SCALE: 10.
+                STRIPES_ANGLE: 3.14159265
+            blocks:
+                color: |
+                    //vec2 st = getScreenNonStretchCoords();
+                    vec2 st = getTileCoords();
+
+                    color.rgb = mix(mix(u_colors[0], u_colors[1], gl_FragCoord.x/u_resolution.x),
+                                mix(u_colors[2], u_colors[3], gl_FragCoord.x/u_resolution.x),
+                                stripes(st*10.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+
+    universities-stripes-2-gradients:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen, space-tile]
+        shaders:
+            uniforms:
+                u_colors:
+                    - [0.479,0.320,1.000] # lower-left
+                    - [0.590,1.000,0.925] # lower-right
+                    - [0.116,0.223,0.610] # upper-left
+                    - [0.028,0.003,0.130] # upper-right
+            defines:
+                STRIPES_WIDTH: .95
+                STRIPES_ALPHA: 1.0
+                STRIPES_SCALE: 10.
+                STRIPES_ANGLE: 3.14159265
+            blocks:
+                color: |
+                    //vec2 st = getScreenNonStretchCoords();
+                    vec2 st = getTileCoords();
+
+                    color.rgb = mix(mix(u_colors[0], u_colors[1], gl_FragCoord.x/u_resolution.x),
+                                mix(u_colors[2], u_colors[3], gl_FragCoord.x/u_resolution.x),
+                                stripes(st*10.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+
     stripes-hospital-bldgs:
         base: polygons
         mix: [functions-aastep, patterns-stripes, space-screen]
@@ -793,6 +858,33 @@ styles:
                     - [0.073,0.190,0.610] # lower-right
                     - [0.080,0.530,0.342] # upper-left
                     - [0.548,1.000,0.410]
+                    # - [0.557,0.854,0.319] # upper-right
+            defines:
+                STRIPES_WIDTH: .15
+                STRIPES_ALPHA: 1.0
+                STRIPES_SCALE: 0.7
+                STRIPES_ANGLE: 3.14159265
+            blocks:
+                color: |
+                    //vec2 st = getScreenNonStretchCoords();
+                    vec2 st = getTileCoords();
+
+                    color.rgb = mix(mix(u_colors[0], u_colors[1], gl_FragCoord.x/u_resolution.x),
+                                mix(u_colors[2], u_colors[3], gl_FragCoord.x/u_resolution.x),
+                                stripes(st*13.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+
+    natl-park-stripes-2-gradients:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen, space-tile]
+        shaders:
+            uniforms:
+                u_colors:
+                    - [0.073,0.190,0.610] # lower-left
+                    - [0.073,0.190,0.610] # lower-right
+                    - [0.394,0.960,0.630] # upper-left
+                    - [0.000,0.610,0.539]
                     # - [0.557,0.854,0.319] # upper-right
             defines:
                 STRIPES_WIDTH: .15
