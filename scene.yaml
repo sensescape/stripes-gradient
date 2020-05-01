@@ -883,8 +883,7 @@ styles:
                     - [0.073,0.190,0.610] # lower-left
                     - [0.073,0.190,0.610] # lower-right
                     - [0.394,0.960,0.630] # upper-left
-                    - [0.000,0.610,0.539]
-                    # - [0.557,0.854,0.319] # upper-right
+                    - [0.000,0.610,0.539] # upper-right
             defines:
                 STRIPES_WIDTH: .15
                 STRIPES_ALPHA: 1.0
@@ -910,8 +909,7 @@ styles:
                     - [0.073,0.190,0.610] # lower-left
                     - [0.073,0.190,0.610] # lower-right
                     - [0.000,1.000,0.500] # upper-left
-                    - [0.000,0.458,0.500]
-                    # - [0.557,0.854,0.319] # upper-right
+                    - [0.000,0.458,0.500] # upper-right
             defines:
                 STRIPES_WIDTH: .15
                 STRIPES_ALPHA: 1.0
@@ -937,8 +935,7 @@ styles:
                     - [0.073,0.190,0.610] # lower-left
                     - [0.073,0.190,0.610] # lower-right
                     - [0.000,0.730,0.280] # upper-left
-                    - [0.000,0.667,0.890]
-                    # - [0.557,0.854,0.319] # upper-right
+                    - [0.000,0.667,0.890] # upper-right
             defines:
                 STRIPES_WIDTH: .15
                 STRIPES_ALPHA: 1.0
@@ -964,8 +961,7 @@ styles:
                     - [0.073,0.190,0.610] # lower-left
                     - [0.073,0.190,0.610] # lower-right
                     - [0.500,0.500,0.500] # upper-left
-                    - [0.900,0.900,0.900]
-                    # - [0.557,0.854,0.319] # upper-right
+                    - [0.900,0.900,0.900] # upper-right
             defines:
                 STRIPES_WIDTH: .15
                 STRIPES_ALPHA: 1.0
